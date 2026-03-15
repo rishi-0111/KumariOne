@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #0c0a1a;
-  --color-foreground: #f8f7ff;
-  --color-primary: #a855f7;
-  --color-primary-light: #c084fc;
-  --color-primary-dark: #7c3aed;
-  --color-accent: #e9d5ff;
-  --color-surface: #1a1530;
-  --color-surface-light: #251f3d;
-  --font-sans: var(--font-inter);
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-primary: #6C4CF1;
+  --color-primary-light: #8b7ef8;
+  --color-primary-dark: #4f39ce;
+  --color-accent: #f5f3ff;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8fafc;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-display: var(--font-poppins), sans-serif;
 }
 
 /* =============================================
@@ -26,8 +27,12 @@ html {
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
 }
 
 /* =============================================
@@ -43,131 +48,77 @@ body {
 }
 
 /* =============================================
-   Custom Scrollbar — Purple Theme
+   Custom Scrollbar — Modern Light
    ============================================= */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0c0a1a;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3b2d6b;
-  border-radius: 4px;
+  background: #e2e8f0;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #5b45a0;
+  background: #cbd5e1;
 }
 
 /* =============================================
-   Glassmorphism Utility — Purple Tint
+   Card Style Utility
    ============================================= */
-.glass {
-  background: rgba(26, 21, 48, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(168, 85, 247, 0.1);
+.modern-card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.modern-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #e2e8f0;
 }
 
 /* =============================================
-   Gradient Text Utility — Purple & White
-   ============================================= */
-.gradient-text {
-  background: linear-gradient(135deg, #c084fc 0%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-text-purple {
-  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 50%, #c084fc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* =============================================
-   Circle Logo Frame
+   Logo Circle Style
    ============================================= */
 .logo-circle {
-  width: 120px;
-  height: 120px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.05));
-  border: 2px solid rgba(168, 85, 247, 0.3);
+  background: linear-gradient(135deg, #6C4CF1 0%, #8b7ef8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  box-shadow:
-    0 0 30px rgba(168, 85, 247, 0.15),
-    0 0 60px rgba(168, 85, 247, 0.05),
-    inset 0 0 30px rgba(168, 85, 247, 0.05);
-}
-
-.logo-circle img {
-  width: 75%;
-  height: 75%;
-  object-fit: contain;
+  color: white;
+  box-shadow: 0 8px 20px rgba(108, 76, 241, 0.3);
 }
 
 /* =============================================
-   Particle canvas overlay for splash
+   Gradient Text Utility
    ============================================= */
-.particles-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
+.gradient-text {
+  background: linear-gradient(135deg, #6C4CF1 0%, #4f39ce 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* =============================================
-   Splash Background Gradient Animation — Purple
+   Splash Animations
    ============================================= */
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animated-gradient-bg {
-  background: linear-gradient(
-    -45deg,
-    #0c0a1a,
-    #1e1145,
-    #2d1a6b,
-    #160f30,
-    #0c0a1a
-  );
-  background-size: 400% 400%;
-  animation: gradientShift 8s ease infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animated-gradient-bg {
-    animation: none;
-    background: #0c0a1a;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* =============================================
-   Glow Effects — Purple
-   ============================================= */
-.glow-purple {
-  filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4));
-}
-
-.glow-white {
-  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
-}
-
-/* =============================================
-   Pulse Ring Animation — Purple
-   ============================================= */
-@keyframes pulseRing {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+.animate-fade-up {
+  animation: fadeInUp 0.8s ease-out forwards;
 }

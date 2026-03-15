@@ -1,147 +1,142 @@
 'use client';
 
-import Image from 'next/image';
-import {
-  MapPin, Sparkles, ShoppingBag, CalendarCheck, Phone, Mic,
-  ChevronRight, Moon, Globe, User, BarChart3
-} from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import Navbar from '@/components/Navbar';
+import { Search, Sparkles, MapPin, Star, TrendingUp, ArrowRight } from 'lucide-react';
+import { gsap } from 'gsap';
 
-const dashboardCards = [
-  {
-    title: 'Explore Map',
-    desc: 'Interactive OpenStreetMap with real-time tourist markers, hidden gems, and nearby services.',
-    icon: MapPin,
-    gradient: 'from-purple-600/20 to-purple-500/5',
-    iconBg: 'bg-purple-500/15',
-    iconColor: 'text-purple-400',
-    hoverBorder: 'hover:border-purple-500/40',
-    href: '/map',
-  },
-  {
-    title: 'AI Recommendations',
-    desc: 'Personalized itineraries powered by machine learning and local knowledge.',
-    icon: Sparkles,
-    gradient: 'from-violet-600/20 to-violet-500/5',
-    iconBg: 'bg-violet-500/15',
-    iconColor: 'text-violet-400',
-    hoverBorder: 'hover:border-violet-500/40',
-    href: '/recommendations',
-  },
-  {
-    title: 'Tribal Marketplace',
-    desc: 'Authentic handcrafted products from local tribal communities.',
-    icon: ShoppingBag,
-    gradient: 'from-fuchsia-600/20 to-fuchsia-500/5',
-    iconBg: 'bg-fuchsia-500/15',
-    iconColor: 'text-fuchsia-400',
-    hoverBorder: 'hover:border-fuchsia-500/40',
-    href: '/marketplace',
-  },
-  {
-    title: 'Book Hotels',
-    desc: 'Find and book the best stays near Kanniyakumari with verified reviews.',
-    icon: CalendarCheck,
-    gradient: 'from-indigo-600/20 to-indigo-500/5',
-    iconBg: 'bg-indigo-500/15',
-    iconColor: 'text-indigo-400',
-    hoverBorder: 'hover:border-indigo-500/40',
-    href: '/hotels',
-  },
-  {
-    title: 'Emergency Services',
-    desc: 'Quick access to hospitals, police stations, and tourist helplines.',
-    icon: Phone,
-    gradient: 'from-rose-600/20 to-rose-500/5',
-    iconBg: 'bg-rose-500/15',
-    iconColor: 'text-rose-400',
-    hoverBorder: 'hover:border-rose-400/40',
-    href: '/emergency',
-  },
-  {
-    title: 'Voice Assistant',
-    desc: 'Ask questions in Tamil, Hindi, or English using our AI voice guide.',
-    icon: Mic,
-    gradient: 'from-purple-500/20 to-white/5',
-    iconBg: 'bg-purple-300/15',
-    iconColor: 'text-purple-300',
-    hoverBorder: 'hover:border-purple-300/40',
-    href: '/voice',
-  },
+const recommendedPlaces = [
+  { id: 1, title: 'Vivekananda Rock', loc: 'Kanya Kumari', rating: 4.8, img: 'https://images.unsplash.com/photo-1594917544062-817349942a77?auto=format' },
+  { id: 2, title: 'Thiruvalluvar Statue', loc: 'Kanya Kumari', rating: 4.7, img: 'https://images.unsplash.com/photo-1626244465457-3770335eef6e?auto=format' },
+  { id: 3, title: 'Mathur Aqueduct', loc: 'Mathur', rating: 4.6, img: 'https://images.unsplash.com/photo-1590050752117-23a9d7f20ec6?auto=format' },
+];
+
+const nearbyAttractions = [
+  { id: 4, title: 'Padmanabhapuram Palace', loc: 'Thuckalay', rating: 4.9, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format' },
+  { id: 5, title: 'Vattakottai Fort', loc: 'Kanya Kumari', rating: 4.5, img: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format' },
+  { id: 6, title: 'Sanguthurai Beach', loc: 'Sanguthurai', rating: 4.4, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format' },
 ];
 
 export default function DashboardPage() {
-  return (
-    <div className="min-h-screen" style={{ background: '#0c0a1a' }}>
-      {/* Header */}
-      <header className="sticky top-0 z-50 glass border-b border-purple-500/10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Circle Logo in header */}
-            <div className="w-10 h-10 rounded-full bg-purple-500/10 border border-purple-500/25 flex items-center justify-center overflow-hidden">
-              <Image src="/logo.png" alt="KumariOne" width={30} height={30} style={{ objectFit: 'contain' }} />
-            </div>
-            <span className="text-lg font-bold">
-              <span className="text-white">Kumari</span>
-              <span className="text-purple-400">One</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="p-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300/60 hover:text-white transition-colors cursor-pointer" title="Language">
-              <Globe size={18} />
-            </button>
-            <button className="p-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300/60 hover:text-white transition-colors cursor-pointer" title="Dark Mode">
-              <Moon size={18} />
-            </button>
-            <button className="p-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300/60 hover:text-white transition-colors cursor-pointer" title="Analytics">
-              <BarChart3 size={18} />
-            </button>
-            <div className="w-px h-6 bg-purple-500/20 mx-1" />
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 transition-colors cursor-pointer">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center">
-                <User size={14} className="text-white" />
-              </div>
-              <span className="text-sm text-purple-200/80 hidden sm:inline">Profile</span>
-            </button>
-          </div>
-        </div>
-      </header>
+  const containerRef = useRef<HTMLDivElement>(null);
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 pt-10 pb-6 animate-[fadeInUp_0.6s_ease-out]">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold">
-            <span className="text-white">Welcome, </span>
-            <span className="gradient-text">Explorer</span>
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".hero-content", { opacity: 0, y: 30, duration: 1, ease: "power3.out" });
+      gsap.from(".section-title", { opacity: 0, x: -20, stagger: 0.2, duration: 0.8, ease: "power2.out", delay: 0.4 });
+      gsap.from(".place-card", { opacity: 0, y: 30, stagger: 0.1, duration: 0.8, ease: "power2.out", delay: 0.6 });
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
+  const Card = ({ place }: { place: any }) => (
+    <div className="place-card modern-card overflow-hidden group">
+      <div className="relative h-56 overflow-hidden">
+        <img 
+          src={place.img} 
+          alt={place.title} 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+          <Star size={14} className="text-yellow-500 fill-yellow-500" />
+          <span className="text-xs font-bold text-slate-800">{place.rating}</span>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="flex items-center gap-1 text-slate-400 mb-1">
+          <MapPin size={14} />
+          <span className="text-xs font-medium">{place.loc}</span>
+        </div>
+        <h3 className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors mb-4 line-clamp-1">
+          {place.title}
+        </h3>
+        <button className="w-full flex items-center justify-center gap-2 py-3 mt-auto bg-slate-50 group-hover:bg-primary group-hover:text-white text-slate-600 font-bold rounded-xl transition-all duration-300">
+          Explore
+          <ArrowRight size={16} />
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div ref={containerRef} className="min-h-screen bg-white">
+      <Navbar />
+
+      {/* Hero / Search Section */}
+      <section className="relative py-20 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center hero-content">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm mb-6">
+            <Sparkles size={16} />
+            AI-Powered Smart Local Guide
+          </div>
+          <h1 className="text-4xl md:text-6xl font-black font-display text-slate-900 mb-6 leading-tight max-w-4xl mx-auto">
+            Discover the Hidden Gems of <br />
+            <span className="gradient-text">Kanniyakumari</span>
           </h1>
-          <p className="text-purple-300/50 mt-2">What would you like to discover in Kanniyakumari today?</p>
+          <p className="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+            Experience the confluence of three oceans, ancient temples, and serene backwaters with our smart tourism platform.
+          </p>
+
+          <div className="w-full max-w-3xl relative group">
+            <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+              <Search className="text-slate-400 group-focus-within:text-primary transition-colors" size={24} />
+            </div>
+            <input 
+              type="text" 
+              placeholder="Where do you want to go?" 
+              className="w-full h-18 bg-white rounded-[2rem] pl-16 pr-32 shadow-2xl shadow-slate-200 border-none outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-lg"
+            />
+            <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-dark text-white px-8 py-3.5 rounded-[1.5rem] font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">
+              Search
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Cards Grid */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {dashboardCards.map((card, i) => {
-            const Icon = card.icon;
-            return (
-              <a
-                key={card.title}
-                href={card.href}
-                className={`group rounded-2xl p-6 border border-purple-500/10 ${card.hoverBorder} transition-all duration-300 cursor-pointer hover:-translate-y-1 bg-gradient-to-br ${card.gradient} backdrop-blur-sm`}
-                style={{ animationDelay: `${0.1 + i * 0.08}s` }}
-              >
-                <div className={`w-11 h-11 rounded-xl ${card.iconBg} flex items-center justify-center mb-4`}>
-                  <Icon size={22} className={`${card.iconColor} transition-colors`} />
-                </div>
-                <h2 className="text-lg font-semibold text-white mb-2">
-                  {card.title}
-                </h2>
-                <p className="text-purple-200/40 text-sm leading-relaxed mb-4">{card.desc}</p>
-                <div className="flex items-center text-xs text-purple-300/30 group-hover:text-purple-300/60 transition-colors">
-                  Explore <ChevronRight size={14} className="ml-1" />
-                </div>
-              </a>
-            );
-          })}
+      {/* Recommended Section */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-between mb-10 section-title">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-xl text-primary">
+              <Sparkles size={24} />
+            </div>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900">Recommended for you</h2>
+              <p className="text-slate-500 text-sm">Personalized picks based on your interests</p>
+            </div>
+          </div>
+          <button className="flex items-center gap-2 text-primary font-bold hover:underline">
+            View all
+            <ArrowRight size={18} />
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {recommendedPlaces.map(place => (
+            <Card key={place.id} place={place} />
+          ))}
+        </div>
+      </section>
+
+      {/* Nearby attractions */}
+      <section className="max-w-7xl mx-auto px-6 py-12 mb-20">
+        <div className="flex items-center justify-between mb-10 section-title">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-slate-100 rounded-xl text-slate-700">
+              <MapPin size={24} />
+            </div>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900">Nearby attractions</h2>
+              <p className="text-slate-500 text-sm">Destinations within reach from your location</p>
+            </div>
+          </div>
+          <button className="flex items-center gap-2 text-slate-500 font-bold hover:text-slate-900 transition-colors">
+            Explore map
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {nearbyAttractions.map(place => (
+            <Card key={place.id} place={place} />
+          ))}
         </div>
       </section>
     </div>
