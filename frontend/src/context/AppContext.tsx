@@ -4,6 +4,15 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 type Language = 'en' | 'ta' | 'hi';
 type Theme = 'light' | 'dark';
+type UserRole = 'traveler' | 'merchant' | 'guide' | 'admin';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar?: string;
+}
 
 const translations: Record<Language, Record<string, string>> = {
   en: {
@@ -21,6 +30,15 @@ const translations: Record<Language, Record<string, string>> = {
     'menu.about': 'About Us',
     'menu.bookings': 'My Bookings',
     'menu.saved': 'Saved Places',
+    'menu.orders': 'My Orders',
+    'menu.shop': 'My Shop',
+    'menu.analytics': 'Analytics',
+    'menu.tours': 'My Tours',
+    'menu.schedule': 'Schedule',
+    'menu.users': 'User Management',
+    'menu.content': 'Content Mgmt',
+    'menu.reports': 'Reports',
+    'menu.settings': 'Settings',
     'map.search': 'Search destinations...',
     'map.from': 'From your location',
     'map.to': 'Destination',
@@ -59,6 +77,15 @@ const translations: Record<Language, Record<string, string>> = {
     'menu.about': 'எங்களை பற்றி',
     'menu.bookings': 'என் பதிவுகள்',
     'menu.saved': 'சேமித்த இடங்கள்',
+    'menu.orders': 'ஆர்டர்கள்',
+    'menu.shop': 'என் கடை',
+    'menu.analytics': 'பகுப்பாய்வு',
+    'menu.tours': 'என் சுற்றுப்பயணங்கள்',
+    'menu.schedule': 'அட்டவணை',
+    'menu.users': 'பயனர் மேலாண்மை',
+    'menu.content': 'உள்ளடக்க மேலாண்மை',
+    'menu.reports': 'அறிக்கைகள்',
+    'menu.settings': 'அமைப்புகள்',
     'map.search': 'இடங்களை தேடுங்கள்...',
     'map.from': 'உங்கள் இருப்பிடம்',
     'map.to': 'சேருமிடம்',
@@ -97,6 +124,15 @@ const translations: Record<Language, Record<string, string>> = {
     'menu.about': 'हमारे बारे में',
     'menu.bookings': 'मेरी बुकिंग',
     'menu.saved': 'सहेजे गए स्थान',
+    'menu.orders': 'मेरे ऑर्डर',
+    'menu.shop': 'मेरी दुकान',
+    'menu.analytics': 'विश्लेषण',
+    'menu.tours': 'मेरे दौरे',
+    'menu.schedule': 'अनुसूची',
+    'menu.users': 'उपयोगकर्ता प्रबंधन',
+    'menu.content': 'सामग्री प्रबंधन',
+    'menu.reports': 'रिपोर्ट',
+    'menu.settings': 'सेटिंग्स',
     'map.search': 'स्थान खोजें...',
     'map.from': 'आपका स्थान',
     'map.to': 'गंतव्य',
@@ -127,6 +163,8 @@ interface AppContextType {
   setLanguage: (lang: Language) => void;
   theme: Theme;
   setTheme: (t: Theme) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
   t: (key: string) => string;
 }
 
@@ -135,18 +173,39 @@ const AppContext = createContext<AppContextType>({
   setLanguage: () => {},
   theme: 'light',
   setTheme: () => {},
+  user: null,
+  setUser: () => {},
   t: (key) => key,
 });
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('en');
   const [theme, setThemeState] = useState<Theme>('light');
+  const [user, setUserState] = useState<User | null>(null);
 
   useEffect(() => {
     const savedLang = (localStorage.getItem('kone_lang') as Language) || 'en';
     const savedTheme = (localStorage.getItem('kone_theme') as Theme) || 'light';
+    const savedUser = localStorage.getItem('kone_user');
+    
     setLanguageState(savedLang);
     setThemeState(savedTheme);
+    if (savedUser) {
+      try {
+        setUserState(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Failed to parse saved user', e);
+      }
+    } else {
+      // Default traveler user for demo purposes if nothing saved
+      const defaultUser: User = {
+        id: '1',
+        name: 'John Doe',
+        email: 'john@example.com',
+        role: 'traveler'
+      };
+      setUserState(defaultUser);
+    }
   }, []);
 
   useEffect(() => {
@@ -166,10 +225,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (t: Theme) => setThemeState(t);
 
+  const setUser = (u: User | null) => {
+    setUserState(u);
+    if (u) {
+      localStorage.setItem('kone_user', JSON.stringify(u));
+    } else {
+      localStorage.removeItem('kone_user');
+    }
+  };
+
   const t = (key: string) => translations[language][key] || translations['en'][key] || key;
 
   return (
-    <AppContext.Provider value={{ language, setLanguage, theme, setTheme, t }}>
+    <AppContext.Provider value={{ language, setLanguage, theme, setTheme, user, setUser, t }}>
       {children}
     </AppContext.Provider>
   );

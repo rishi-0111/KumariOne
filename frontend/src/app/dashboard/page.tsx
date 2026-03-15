@@ -12,7 +12,15 @@ import {
   Calendar,
   Heart,
   User,
-  LayoutGrid
+  LayoutGrid,
+  Package,
+  Store,
+  BarChart3,
+  Ticket,
+  Users,
+  FileText,
+  PieChart,
+  Settings
 } from 'lucide-react';
 import { gsap } from 'gsap';
 import { useRouter } from 'next/navigation';
@@ -21,21 +29,54 @@ import { useApp } from '@/context/AppContext';
 export default function DashboardPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { t } = useApp();
+  const { t, user } = useApp();
 
-  const dashboardItems = [
-    { id: 1, label: t('menu.explore_map'), icon: MapIcon,    color: 'bg-rose-500',     href: '/map' },
-    { id: 2, label: t('menu.hidden_gems'), icon: Sparkles,   color: 'bg-teal-500',     href: '/hidden-gems' },
-    { id: 3, label: t('menu.hotels'),      icon: Hotel,      color: 'bg-indigo-500',   href: '/hotels' },
-    { id: 4, label: t('menu.marketplace'), icon: ShoppingBag,color: 'bg-green-500',    href: '/marketplace' },
-    { id: 5, label: t('menu.voice'),       icon: Mic,        color: 'bg-sky-500',      href: '/voice' },
-    { id: 6, label: t('menu.about'),       icon: Info,       color: 'bg-fuchsia-500',  href: '/about' },
-    { id: 7, label: t('menu.bookings'),    icon: Calendar,   color: 'bg-blue-600',     href: '/profile' },
-    { id: 8, label: t('menu.saved'),       icon: Heart,      color: 'bg-rose-600',     href: '/profile' },
-    { id: 9, label: t('nav.profile'),      icon: User,       color: 'bg-violet-600',   href: '/profile' },
-  ];
+  const getDashboardItems = () => {
+    const role = user?.role || 'traveler';
+    
+    switch (role) {
+      case 'merchant':
+        return [
+          { id: 1, label: t('menu.marketplace'), icon: ShoppingBag, color: 'bg-green-500',   href: '/marketplace' },
+          { id: 2, label: t('menu.shop'),        icon: Store,       color: 'bg-amber-500',   href: '/dashboard' },
+          { id: 3, label: t('menu.orders'),      icon: Package,     color: 'bg-orange-500',  href: '/dashboard' },
+          { id: 4, label: t('menu.analytics'),   icon: BarChart3,   color: 'bg-indigo-500',  href: '/dashboard' },
+          { id: 5, label: t('menu.settings'),    icon: Settings,    color: 'bg-slate-500',   href: '/profile' },
+        ];
+      case 'guide':
+        return [
+          { id: 1, label: t('menu.tours'),       icon: Ticket,      color: 'bg-emerald-500', href: '/dashboard' },
+          { id: 2, label: t('menu.schedule'),    icon: Calendar,    color: 'bg-blue-500',    href: '/dashboard' },
+          { id: 3, label: t('menu.explore_map'), icon: MapIcon,     color: 'bg-rose-500',    href: '/map' },
+          { id: 4, label: t('menu.analytics'),   icon: BarChart3,   color: 'bg-indigo-500',  href: '/dashboard' },
+          { id: 5, label: t('menu.settings'),    icon: Settings,    color: 'bg-slate-500',   href: '/profile' },
+        ];
+      case 'admin':
+        return [
+          { id: 1, label: t('menu.users'),       icon: Users,       color: 'bg-violet-500',  href: '/dashboard' },
+          { id: 2, label: t('menu.content'),     icon: FileText,    color: 'bg-amber-500',   href: '/dashboard' },
+          { id: 3, label: t('menu.reports'),     icon: PieChart,    color: 'bg-rose-500',    href: '/dashboard' },
+          { id: 4, label: t('menu.analytics'),   icon: BarChart3,   color: 'bg-indigo-500',  href: '/dashboard' },
+          { id: 5, label: t('menu.settings'),    icon: Settings,    color: 'bg-slate-500',   href: '/profile' },
+        ];
+      case 'traveler':
+      default:
+        return [
+          { id: 1, label: t('menu.explore_map'), icon: MapIcon,    color: 'bg-rose-500',    href: '/map' },
+          { id: 2, label: t('menu.hidden_gems'), icon: Sparkles,   color: 'bg-teal-500',    href: '/hidden-gems' },
+          { id: 3, label: t('menu.hotels'),      icon: Hotel,      color: 'bg-indigo-500',  href: '/hotels' },
+          { id: 4, label: t('menu.marketplace'), icon: ShoppingBag,color: 'bg-green-500',   href: '/marketplace' },
+          { id: 5, label: t('menu.voice'),       icon: Mic,        color: 'bg-sky-500',     href: '/voice' },
+          { id: 6, label: t('menu.bookings'),    icon: Calendar,   color: 'bg-blue-600',    href: '/profile' },
+          { id: 7, label: t('menu.saved'),       icon: Heart,      color: 'bg-rose-600',    href: '/profile' },
+        ];
+    }
+  };
+
+  const dashboardItems = getDashboardItems();
 
   useEffect(() => {
+    // Re-run animation when items change (e.g. role change)
     const ctx = gsap.context(() => {
       gsap.from('.grid-item', {
         scale: 0,
@@ -52,7 +93,7 @@ export default function DashboardPage() {
       });
     }, containerRef);
     return () => ctx.revert();
-  }, []);
+  }, [user?.role]);
 
   const handleNav = (href: string) => {
     gsap.to('.grid-item', {
@@ -64,6 +105,10 @@ export default function DashboardPage() {
       onComplete: () => router.push(href),
     });
     gsap.to('.dash-header, .dash-bottom', { opacity: 0, duration: 0.25 });
+  };
+
+  const getUserInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
   };
 
   return (
@@ -83,8 +128,12 @@ export default function DashboardPage() {
             </h1>
           </div>
           <button onClick={() => handleNav('/profile')} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 px-3 py-2 rounded-2xl">
-            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">JD</div>
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 hidden sm:block">John Doe</span>
+            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+              {user ? getUserInitials(user.name) : '??'}
+            </div>
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 hidden sm:block">
+              {user?.name || 'Guest'}
+            </span>
           </button>
         </div>
 
@@ -109,7 +158,6 @@ export default function DashboardPage() {
                 onClick={() => handleNav(item.href)}
                 className="grid-item flex flex-col items-center gap-3 group cursor-pointer"
               >
-                {/* Icon Box — w-20 h-20 fixed as requested */}
                 <div
                   className={`w-20 h-20 ${item.color} rounded-2xl flex items-center justify-center text-white
                     shadow-xl transition-all duration-300

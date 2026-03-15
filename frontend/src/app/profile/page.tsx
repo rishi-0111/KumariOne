@@ -3,7 +3,7 @@
 import PageHeader from '@/components/PageHeader';
 import { 
   User, Calendar, ShoppingBag, Heart, Settings, LogOut, 
-  Edit3, ChevronRight, MapPin, Moon, Sun, Globe, Check
+  Edit3, ChevronRight, MapPin, Moon, Sun, Globe, Check, Shield
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
@@ -15,7 +15,7 @@ const LANGUAGES = [
 ] as const;
 
 export default function ProfilePage() {
-  const { t, theme, setTheme, language, setLanguage } = useApp();
+  const { t, theme, setTheme, language, setLanguage, user, setUser } = useApp();
   const router = useRouter();
 
   return (
@@ -95,6 +95,29 @@ export default function ProfilePage() {
                       {lang.label}
                     </span>
                     {language === lang.code && <Check size={16} />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Role Switcher (For testing dashboards) ── */}
+            <div className="modern-card p-5">
+              <div className="flex items-center gap-3 mb-4">
+                <Shield size={20} className="text-primary" />
+                <p className="font-bold text-slate-800 dark:text-white text-sm">Switch Role</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {(['traveler', 'merchant', 'guide', 'admin'] as const).map(role => (
+                  <button
+                    key={role}
+                    onClick={() => user && setUser({ ...user, role })}
+                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border
+                      ${user?.role === role
+                        ? 'bg-primary text-white border-primary shadow-md'
+                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-700 hover:border-primary'
+                      }`}
+                  >
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
                   </button>
                 ))}
               </div>
