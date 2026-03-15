@@ -20,6 +20,16 @@ KumariOne is a platform that bridges the gap between tourists seeking authentic 
 - **Emergency SOS** - Real-time emergency response system
 - **Analytics Dashboard** - Comprehensive business intelligence for admins
 
+## ✅ Role-Based Navigation
+
+KumariOne uses role-aware navigation to send each user type to the right dashboard:
+
+- **Traveler**: Home, discovery, and marketplace flow
+- **Business Owner**: Admin dashboard and business management
+- **Tribal Vendor**: Vendor dashboard, products, and orders
+
+The selected role is stored locally (client-side) to keep the session consistent during development.
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -139,6 +149,13 @@ kumariOne/
 14. **Settings** - Admin preferences and configuration
 15. **User Activity Audit** - Track admin and user activities
 
+### 🛒 Marketplace Flow
+
+- **Marketplace**: Browse products and add to cart
+- **Checkout**: Shipping + tax calculation, payment method selection
+- **Order Confirmation**: Success screen with order details
+- **Orders**: View tracking timeline and order history
+
 ### 🎨 Design Features
 - **Purple Theme** - Primary color: `#9333ea`
 - **White Backgrounds** - Clean, modern interface
@@ -199,6 +216,8 @@ REDIS_URL=redis://localhost:6379
 cd frontend
 npm run dev
 # App will be available at http://localhost:3000
+# If port 3000 is busy, use a custom port
+# npm run dev -- -p 3050
 ```
 
 **Terminal 2 - Backend (Express.js)**
@@ -214,6 +233,20 @@ cd infrastructure
 docker-compose up -d
 # PostgreSQL will be available at localhost:5432
 ```
+
+### Local Development Notes
+
+- If the app loads slowly on first run, wait for the initial compile to finish.
+- If you see a runtime `ChunkLoadError`, clear the cache and restart:
+	```bash
+	cd frontend
+	Remove-Item -Path ".next" -Recurse -Force -ErrorAction SilentlyContinue
+	npm run dev -- -p 3050
+	```
+- If Turbopack is unstable on your machine, you can run without it:
+	```bash
+	npm run dev -- --no-turbopack -p 3050
+	```
 
 ## 📊 Admin Dashboard Routes
 
