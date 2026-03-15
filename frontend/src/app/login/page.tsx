@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { gsap } from 'gsap';
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import CircularLogo from '@/components/CircularLogo';
-import RotatingGlobe from '@/components/RotatingGlobe';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -119,14 +118,17 @@ export default function LoginPage() {
       </div>
 
       {/* Right side: Visuals */}
-      <div className="hidden lg:flex relative bg-slate-50/50 items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-        <div className="w-[800px] h-[800px]">
-          <RotatingGlobe />
-        </div>
-        <div className="absolute bottom-12 left-12 right-12 text-center">
-          <p className="text-slate-400 text-sm font-medium tracking-widest uppercase mb-4">KumariOne Smart Tourism</p>
-          <h2 className="text-4xl font-bold font-display text-slate-900 leading-tight">
+      <div className="hidden lg:flex relative bg-gradient-to-br from-slate-900 to-slate-800 items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
+        <img 
+          src="https://images.unsplash.com/photo-1599092676305-2d1e0b80fcf2?auto=format&w=1200&h=1200&fit=crop"
+          alt="Thiruvalluvar Statue - Kanyakumari"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute bottom-12 left-12 right-12 text-center z-10">
+          <p className="text-slate-300 text-sm font-medium tracking-widest uppercase mb-4">KumariOne Smart Tourism</p>
+          <h2 className="text-4xl font-bold font-display text-white leading-tight drop-shadow-lg">
             Discover the southern tip <br /> like never before.
           </h2>
         </div>
