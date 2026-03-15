@@ -121,7 +121,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex relative bg-gradient-to-br from-slate-900 to-slate-800 items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
         <img 
-          src="https://images.pexels.com/photos/3408728/pexels-photo-3408728.jpeg?auto=compress&cs=tinysrgb&w=1200"
+          src="https://images.unsplash.com/photo-1545231027-637d3bf67d84?auto=format&w=1200&h=1600&fit=crop"
           alt="Thiruvalluvar Statue - Kanyakumari"
           className="w-full h-full object-cover"
           loading="lazy"
