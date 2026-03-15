@@ -25,10 +25,12 @@
     "react-dom": "19.2.3",
     "react-i18next": "^16.5.8",
     "react-leaflet": "^5.0.0",
+    "recharts": "^3.8.0",
     "three": "^0.183.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
