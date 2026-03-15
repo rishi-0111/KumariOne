@@ -1,10 +1,15 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { gsap } from 'gsap';
 import CircularLogo from './CircularLogo';
-import LocationPin3D from './LocationPin3D';
+
+const LocationPin3D = dynamic(() => import('./LocationPin3D'), {
+  ssr: false,
+  loading: () => <div className="w-32 h-32" />,
+});
 
 export default function SplashScreen() {
   const router = useRouter();
