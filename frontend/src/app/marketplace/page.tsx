@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import PageHeader from '@/components/PageHeader';
 import { ShoppingCart, Heart, Search, Tag, ShoppingBag } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
@@ -31,6 +32,18 @@ export default function MarketplacePage() {
   const [query, setQuery] = useState('');
   const [cartCount, setCartCount] = useState(0);
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const products = containerRef.current.querySelectorAll('.product-card');
+      gsap.fromTo(
+        products,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.5, stagger: 0.06, ease: 'back.out(1.5)' }
+      );
+    }
+  }, [query]);
 
   const filtered = products.filter(p =>
     p.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -48,16 +61,16 @@ export default function MarketplacePage() {
         {/* Title row */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-green-100 text-green-700 font-bold text-xs mb-2 uppercase tracking-widest">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-200 font-bold text-xs mb-2 uppercase tracking-widest">
               <Tag size={12} />
               Fair Trade
             </div>
             <p className="text-slate-500 dark:text-slate-400">Support {filtered.length} local artisans directly</p>
           </div>
-          <button className="relative p-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-slate-600 dark:text-slate-400 hover:text-primary">
+          <button className="relative p-3 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl text-slate-600 dark:text-slate-400 hover:text-purple-600 hover:border-purple-600 transition-colors">
             <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute top-1 right-1 w-5 h-5 bg-primary text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white">
+              <span className="absolute top-1 right-1 w-5 h-5 bg-purple-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800">
                 {cartCount}
               </span>
             )}
@@ -66,20 +79,20 @@ export default function MarketplacePage() {
 
         {/* Search */}
         <div className="relative group mb-8">
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-purple-600 transition-colors" size={18} />
           <input
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={t('market.search')}
-            className="w-full bg-slate-50 dark:bg-slate-800 dark:text-white rounded-2xl py-4 pl-14 pr-5 border border-slate-100 dark:border-slate-700 outline-none focus:ring-2 focus:ring-primary/20 font-medium transition-all"
+            className="w-full bg-slate-50 dark:bg-slate-800 dark:text-white rounded-2xl py-4 pl-14 pr-5 border border-slate-100 dark:border-slate-700 outline-none focus:ring-2 focus:ring-purple-600/20 font-medium transition-all"
           />
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-5">
+        <div ref={containerRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-5">
           {filtered.map(product => (
-            <div key={product.id} className="modern-card overflow-hidden group">
+            <div key={product.id} className="product-card bg-white dark:bg-slate-900 rounded-2xl overflow-hidden group shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-slate-800">
               <div className="relative h-40 overflow-hidden">
                 <img
                   src={product.img}
@@ -97,14 +110,14 @@ export default function MarketplacePage() {
               </div>
               <div className="p-3">
                 <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  <ShoppingBag size={10} className="text-primary" />
+                  <ShoppingBag size={10} className="text-purple-600" />
                   <span className="truncate">{product.tribe}</span>
                 </div>
                 <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 mb-1 leading-tight">{product.name}</p>
-                <p className="text-primary font-black text-base mb-3">{product.price}</p>
+                <p className="text-purple-600 dark:text-purple-400 font-black text-base mb-3">{product.price}</p>
                 <button
                   onClick={() => setCartCount(c => c + 1)}
-                  className="w-full py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary-dark transition-all active:scale-95"
+                  className="w-full py-2 bg-purple-600 text-white rounded-xl text-xs font-bold hover:bg-purple-700 transition-all active:scale-95"
                 >
                   {t('market.add_cart')}
                 </button>

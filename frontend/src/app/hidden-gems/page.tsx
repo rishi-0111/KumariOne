@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { useRouter } from 'next/navigation';
 import PageHeader from '@/components/PageHeader';
 import { MapPin, Compass, Search, ArrowRight } from 'lucide-react';
@@ -25,6 +26,18 @@ export default function HiddenGemsPage() {
   const { t } = useApp();
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const cards = containerRef.current.querySelectorAll('.gem-card');
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out' }
+      );
+    }
+  }, [query]);
 
   const filtered = gems.filter(g =>
     g.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -36,7 +49,7 @@ export default function HiddenGemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       <PageHeader title={t('gems.title')} />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -47,13 +60,13 @@ export default function HiddenGemsPage() {
 
         {/* Search */}
         <div className="relative group mb-8">
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-purple-600 transition-colors" size={18} />
           <input
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={t('gems.search')}
-            className="w-full bg-white dark:bg-slate-800 dark:text-white rounded-2xl py-4 pl-14 pr-5 shadow-sm border border-slate-100 dark:border-slate-700 outline-none focus:ring-2 focus:ring-primary/20 font-medium transition-all"
+            className="w-full bg-slate-50 dark:bg-slate-800 dark:text-white rounded-2xl py-4 pl-14 pr-5 shadow-sm border border-slate-100 dark:border-slate-700 outline-none focus:ring-2 focus:ring-purple-600/20 font-medium transition-all"
           />
         </div>
 
@@ -63,9 +76,9 @@ export default function HiddenGemsPage() {
             No places found for &ldquo;{query}&rdquo;
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map(gem => (
-              <div key={gem.id} className="modern-card overflow-hidden group cursor-pointer" onClick={() => handleExplore(gem)}>
+              <div key={gem.id} className="gem-card bg-white dark:bg-slate-900 rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg transition-shadow border border-gray-100 dark:border-slate-800" onClick={() => handleExplore(gem)}>
                 {/* Image */}
                 <div className="relative h-52 overflow-hidden">
                   <img
@@ -77,8 +90,8 @@ export default function HiddenGemsPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Distance badge */}
-                  <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
-                    <Compass size={12} className="text-primary" />
+                  <div className="absolute top-3 left-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
+                    <Compass size={12} className="text-purple-600" />
                     <span className="text-[11px] font-bold text-slate-700 dark:text-white">{gem.dist}</span>
                   </div>
 
@@ -92,16 +105,16 @@ export default function HiddenGemsPage() {
 
                 {/* Info */}
                 <div className="p-4">
-                  <div className="flex items-center gap-1 text-primary font-bold text-[11px] uppercase tracking-widest mb-1">
+                  <div className="flex items-center gap-1 text-purple-600 font-bold text-[11px] uppercase tracking-widest mb-1">
                     <MapPin size={11} />
                     {gem.loc}
                   </div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors leading-tight mb-3">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-purple-600 transition-colors leading-tight mb-3">
                     {gem.name}
                   </h3>
                   <button
                     onClick={e => { e.stopPropagation(); handleExplore(gem); }}
-                    className="w-full py-2.5 bg-primary/5 hover:bg-primary hover:text-white text-primary font-bold rounded-xl text-sm transition-all duration-300 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-600 hover:text-white text-purple-600 dark:text-purple-400 font-bold rounded-xl text-sm transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     {t('gems.explore')}
                     <ArrowRight size={14} />
