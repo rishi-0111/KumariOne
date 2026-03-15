@@ -1,16 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { gsap } from 'gsap';
-import { Mail, Lock, User, Phone, Eye, EyeOff, UserPlus, ChevronDown } from 'lucide-react';
+import { Mail, Lock, User, Phone, Eye, EyeOff, UserPlus } from 'lucide-react';
 import CircularLogo from '@/components/CircularLogo';
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState('Tourist');
+  const [userType, setUserType] = useState<'traveler' | 'business' | 'vendor'>(
+    (searchParams.get('type') as any) || 'traveler'
+  );
   const formRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -29,6 +32,23 @@ export default function SignupPage() {
     gsap.to(buttonRef.current, { scale: 1, duration: 0.3, ease: "power2.out" });
   };
 
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Store user type
+    localStorage.setItem('userType', userType);
+    
+    // Route based on user type
+    let destination = '/dashboard'; // default traveler
+    if (userType === 'business') {
+      destination = '/admin';
+    } else if (userType === 'vendor') {
+      destination = '/vendor';
+    }
+    
+    router.push(destination);
+  };
+
   return (
     <div className="min-h-screen bg-white selection:bg-primary/20 flex flex-col items-center py-12 px-6">
       <div ref={formRef} className="w-full max-w-xl">
@@ -42,7 +62,25 @@ export default function SignupPage() {
           <p className="text-slate-500 mt-2">Join KumariOne and start your smart journey</p>
         </div>
 
-        <form className="grid md:grid-cols-2 gap-x-6 gap-y-5" onSubmit={(e) => { e.preventDefault(); router.push('/dashboard'); }}>
+        {/* User Type Selector */}
+        <div className="mb-6 grid grid-cols-3 gap-2">
+          {['traveler', 'business', 'vendor'].map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setUserType(type as any)}
+              className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                userType === type
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              {type === 'traveler' ? '🧳 Traveler' : type === 'business' ? '🏢 Business' : '🎨 Vendor'}
+            </button>
+          ))}
+        </div>
+
+        <form className="grid md:grid-cols-2 gap-x-6 gap-y-5" onSubmit={handleSignup}>
           <div className="space-y-2 col-span-2 md:col-span-1">
             <label className="text-sm font-medium text-slate-700 ml-1">Full Name</label>
             <div className="relative group">
@@ -79,22 +117,6 @@ export default function SignupPage() {
                 className="w-full bg-slate-50 border-none rounded-2xl py-3.5 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none"
                 required
               />
-            </div>
-          </div>
-
-          <div className="space-y-2 col-span-2">
-            <label className="text-sm font-medium text-slate-700 ml-1">I am a...</label>
-            <div className="relative">
-              <select 
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full appearance-none bg-slate-50 border-none rounded-2xl py-3.5 pl-5 pr-12 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none text-slate-700 font-medium cursor-pointer"
-              >
-                <option value="Tourist">Tourist</option>
-                <option value="Local Business Owner">Local Business Owner</option>
-                <option value="Tribal Vendor">Tribal Vendor</option>
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
             </div>
           </div>
 
@@ -141,7 +163,7 @@ export default function SignupPage() {
               className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98] cursor-pointer"
             >
               <UserPlus size={20} />
-              Create account
+              Create account as {userType === 'traveler' ? 'Traveler' : userType === 'business' ? 'Business Owner' : 'Tribal Vendor'}
             </button>
           </div>
         </form>
@@ -170,5 +192,13 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><p>Loading...</p></div>}>
+      <SignupForm />
+    </Suspense>
   );
 }

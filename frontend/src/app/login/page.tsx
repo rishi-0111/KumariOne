@@ -10,6 +10,8 @@ import CircularLogo from '@/components/CircularLogo';
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [userType, setUserType] = useState<'traveler' | 'business' | 'vendor'>('traveler');
   const formRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -28,6 +30,25 @@ export default function LoginPage() {
     gsap.to(buttonRef.current, { scale: 1, duration: 0.3, ease: "power2.out" });
   };
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Detect user type from email or switch
+    let destination = '/dashboard'; // default traveler
+    
+    if (userType === 'business') {
+      destination = '/admin';
+    } else if (userType === 'vendor') {
+      destination = '/vendor';
+    }
+    
+    // Store user type in localStorage for session
+    localStorage.setItem('userType', userType);
+    localStorage.setItem('userEmail', email);
+    
+    router.push(destination);
+  };
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-white selection:bg-primary/20">
       {/* Left side: Form */}
@@ -41,13 +62,33 @@ export default function LoginPage() {
             <p className="text-slate-500 mt-2">Enter your details to access your account</p>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); router.push('/dashboard'); }}>
+          {/* User Type Selector */}
+          <div className="mb-6 grid grid-cols-3 gap-2">
+            {['traveler', 'business', 'vendor'].map((type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setUserType(type as any)}
+                className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                  userType === type
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                {type === 'traveler' ? '🧳 Traveler' : type === 'business' ? '🏢 Business' : '🎨 Vendor'}
+              </button>
+            ))}
+          </div>
+
+          <form className="space-y-5" onSubmit={handleLogin}>
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700 ml-1">Email Address</label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
                 <input 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com" 
                   className="w-full bg-slate-50 border-none rounded-2xl py-3.5 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none"
                   required
@@ -88,7 +129,7 @@ export default function LoginPage() {
               className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98] cursor-pointer"
             >
               <LogIn size={20} />
-              Login
+              Login as {userType === 'traveler' ? 'Traveler' : userType === 'business' ? 'Business Owner' : 'Tribal Vendor'}
             </button>
           </form>
 
@@ -112,7 +153,7 @@ export default function LoginPage() {
           </button>
 
           <p className="mt-10 text-center text-slate-500">
-            Don't have an account? <Link href="/signup" className="text-primary font-bold hover:underline">Create account</Link>
+            Don't have an account? <Link href={`/signup?type=${userType}`} className="text-primary font-bold hover:underline">Create account</Link>
           </p>
         </div>
       </div>

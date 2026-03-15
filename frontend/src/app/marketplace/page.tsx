@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import PageHeader from '@/components/PageHeader';
 import { ShoppingCart, Heart, Search, Tag, ShoppingBag } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 
 const products = [
@@ -28,9 +29,10 @@ const products = [
 ];
 
 export default function MarketplacePage() {
+  const router = useRouter();
   const { t } = useApp();
   const [query, setQuery] = useState('');
-  const [cartCount, setCartCount] = useState(0);
+  const [cart, setCart] = useState<any[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +55,15 @@ export default function MarketplacePage() {
   const toggleWishlist = (id: number) =>
     setWishlist(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
+  const handleAddToCart = (product: any) => {
+    const newCart = [...cart, product];
+    setCart(newCart);
+    localStorage.setItem('cart', JSON.stringify(newCart));
+    
+    // Navigate to cart/checkout
+    router.push('/checkout');
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
       <PageHeader title={t('market.title')} />
@@ -67,11 +78,11 @@ export default function MarketplacePage() {
             </div>
             <p className="text-slate-500 dark:text-slate-400">Support {filtered.length} local artisans directly</p>
           </div>
-          <button className="relative p-3 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl text-slate-600 dark:text-slate-400 hover:text-purple-600 hover:border-purple-600 transition-colors">
+          <button onClick={() => router.push('/checkout')} className="relative p-3 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl text-slate-600 dark:text-slate-400 hover:text-purple-600 hover:border-purple-600 transition-colors">
             <ShoppingCart size={22} />
-            {cartCount > 0 && (
+            {cart.length > 0 && (
               <span className="absolute top-1 right-1 w-5 h-5 bg-purple-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800">
-                {cartCount}
+                {cart.length}
               </span>
             )}
           </button>
@@ -116,7 +127,7 @@ export default function MarketplacePage() {
                 <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 mb-1 leading-tight">{product.name}</p>
                 <p className="text-purple-600 dark:text-purple-400 font-black text-base mb-3">{product.price}</p>
                 <button
-                  onClick={() => setCartCount(c => c + 1)}
+                  onClick={() => handleAddToCart(product)}
                   className="w-full py-2 bg-purple-600 text-white rounded-xl text-xs font-bold hover:bg-purple-700 transition-all active:scale-95"
                 >
                   {t('market.add_cart')}
