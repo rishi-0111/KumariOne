@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import gsap from 'gsap';
 import {
   LayoutDashboard,
   Users,
@@ -45,6 +47,18 @@ const navItems = [
 
 export default function AdminSidebar({ open, onToggle }: AdminSidebarProps) {
   const pathname = usePathname();
+  const navRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (navRef.current) {
+      const items = navRef.current.querySelectorAll('[data-nav-item]');
+      gsap.fromTo(
+        items,
+        { opacity: 0, x: -10 },
+        { opacity: 1, x: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' }
+      );
+    }
+  }, [open]);
 
   return (
     <>
@@ -54,19 +68,16 @@ export default function AdminSidebar({ open, onToggle }: AdminSidebarProps) {
           open ? 'w-60' : 'w-20'
         }`}
       >
-        {/* Logo Section */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
-          {open && <h2 className="text-lg font-bold text-purple-600">KumariOne</h2>}
-          <button
-            onClick={onToggle}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
-          >
-            {open ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-          </button>
+        {/* Logo */}
+        <div className="h-16 border-b border-gray-200 flex items-center px-4">
+          <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center text-white font-bold">
+            K
+          </div>
+          {open && <span className="ml-3 font-bold text-purple-600">KumariOne</span>}
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
+        <nav ref={navRef} className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -75,9 +86,10 @@ export default function AdminSidebar({ open, onToggle }: AdminSidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                data-nav-item
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group hover:translate-x-1 ${
                   isActive
-                    ? 'bg-purple-100 text-purple-600'
+                    ? 'bg-purple-100 text-purple-600 shadow-sm'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
                 title={!open ? item.label : ''}

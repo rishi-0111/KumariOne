@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { Trash2, Flag } from 'lucide-react';
 import ActionButton from '@/components/admin/ActionButton';
+import AnimatedTableRow from '@/components/admin/AnimatedTableRow';
 
 const reviews = [
   {
@@ -31,6 +34,17 @@ const reviews = [
 ];
 
 export default function ReviewModeration() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
   const getStatusBadge = (status: string) => {
     const colors: Record<string, string> = {
       Approved: 'bg-green-100 text-green-800',
@@ -41,7 +55,7 @@ export default function ReviewModeration() {
   };
 
   return (
-    <div className="space-y-6">
+    <div ref={containerRef} className="space-y-6">
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -68,8 +82,8 @@ export default function ReviewModeration() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {reviews.map((review) => (
-                <tr key={review.id} className="hover:bg-gray-50 transition-colors">
+              {reviews.map((review, index) => (
+                <AnimatedTableRow key={review.id} index={index}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {review.user}
                   </td>
@@ -97,7 +111,7 @@ export default function ReviewModeration() {
                       <ActionButton icon={Flag} label="Flag" variant="warning" />
                     </div>
                   </td>
-                </tr>
+                </AnimatedTableRow>
               ))}
             </tbody>
           </table>

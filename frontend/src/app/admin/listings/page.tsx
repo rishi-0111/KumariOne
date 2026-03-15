@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { Pencil, Trash2 } from 'lucide-react';
 import ActionButton from '@/components/admin/ActionButton';
+import AnimatedTableRow from '@/components/admin/AnimatedTableRow';
 
 const listings = [
   {
@@ -35,6 +38,18 @@ const listings = [
 ];
 
 export default function TourismListings() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -67,8 +82,8 @@ export default function TourismListings() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {listings.map((listing) => (
-                <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
+              {listings.map((listing, index) => (
+                <AnimatedTableRow key={listing.id} index={index}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {listing.name}
                   </td>
@@ -90,7 +105,7 @@ export default function TourismListings() {
                       <ActionButton icon={Trash2} label="Delete" variant="danger" />
                     </div>
                   </td>
-                </tr>
+                </AnimatedTableRow>
               ))}
             </tbody>
           </table>

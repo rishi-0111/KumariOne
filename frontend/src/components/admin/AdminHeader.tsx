@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { Menu, Bell, Settings, Search } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -9,13 +11,35 @@ interface AdminHeaderProps {
 
 export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (headerRef.current) {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    if (titleRef.current) {
+      gsap.fromTo(
+        titleRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.4, ease: 'power2.out' }
+      );
+    }
+  }, [pathname]);
 
   const getPageTitle = () => {
     const titles: Record<string, string> = {
       '/admin': 'Dashboard',
       '/admin/users': 'User Management',
       '/admin/businesses': 'Business Verification',
-      '/admin/vendors': 'Tribal Vendor Management',
+      '/admin/vendors': 'Tribal Vendors',
       '/admin/listings': 'Tourism Listings',
       '/admin/hidden-gems': 'Hidden Gems',
       '/admin/bookings': 'Booking Management',
@@ -31,22 +55,33 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 md:px-8">
+    <header
+      ref={headerRef}
+      className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 md:px-8"
+    >
       {/* Left: Menu & Title */}
       <div className="flex items-center gap-4 flex-1">
         <button
           onClick={onMenuClick}
-          className="lg:hidden p-2 hover:bg-gray-100 rounded-lg text-gray-600"
+          className="lg:hidden p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-colors"
         >
           <Menu size={20} />
         </button>
-        <h1 className="text-xl font-semibold text-gray-900">{getPageTitle()}</h1>
+        <h1
+          ref={titleRef}
+          className="text-xl font-semibold text-gray-900"
+        >
+          {getPageTitle()}
+        </h1>
       </div>
 
       {/* Center: Search */}
       <div className="hidden md:flex items-center flex-1 max-w-md mx-auto">
         <div className="relative w-full">
-          <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          />
           <input
             type="text"
             placeholder="Search..."

@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { Phone, Heart } from 'lucide-react';
 import ActionButton from '@/components/admin/ActionButton';
+import AnimatedTableRow from '@/components/admin/AnimatedTableRow';
 
 const emergencyAlerts = [
   {
@@ -31,6 +34,18 @@ const emergencyAlerts = [
 ];
 
 export default function EmergencyMonitoring() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
+
   const getStatusBadge = (status: string) => {
     return status === 'Active'
       ? 'bg-red-100 text-red-800'
@@ -80,8 +95,8 @@ export default function EmergencyMonitoring() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {emergencyAlerts.map((alert) => (
-                <tr key={alert.id} className="hover:bg-gray-50 transition-colors">
+              {emergencyAlerts.map((alert, index) => (
+                <AnimatedTableRow key={alert.id} index={index}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {alert.user}
                   </td>
@@ -99,7 +114,7 @@ export default function EmergencyMonitoring() {
                       <ActionButton icon={Heart} label="Help" variant="danger" />
                     </div>
                   </td>
-                </tr>
+                </AnimatedTableRow>
               ))}
             </tbody>
           </table>

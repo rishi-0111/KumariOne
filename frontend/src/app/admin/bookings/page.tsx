@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { XCircle, DollarSign } from 'lucide-react';
 import ActionButton from '@/components/admin/ActionButton';
+import AnimatedTableRow from '@/components/admin/AnimatedTableRow';
 
 const bookings = [
   {
@@ -28,6 +31,18 @@ const bookings = [
 ];
 
 export default function BookingManagement() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
+
   const getPaymentBadge = (status: string) => {
     return status === 'Paid'
       ? 'bg-green-100 text-green-800'
@@ -77,8 +92,8 @@ export default function BookingManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {bookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
+              {bookings.map((booking, index) => (
+                <AnimatedTableRow key={booking.id} index={index}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {booking.id}
                   </td>
@@ -96,7 +111,7 @@ export default function BookingManagement() {
                       <ActionButton icon={DollarSign} label="Refund" variant="warning" />
                     </div>
                   </td>
-                </tr>
+                </AnimatedTableRow>
               ))}
             </tbody>
           </table>

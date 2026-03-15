@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { CheckCircle, Pause, Trash2 } from 'lucide-react';
 import ActionButton from '@/components/admin/ActionButton';
+import AnimatedTableRow from '@/components/admin/AnimatedTableRow';
 
 const vendors = [
   {
@@ -31,6 +34,18 @@ const vendors = [
 ];
 
 export default function VendorManagement() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
+
   const getStatusBadge = (status: string) => {
     return status === 'Active'
       ? 'bg-green-100 text-green-800'
@@ -65,8 +80,8 @@ export default function VendorManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {vendors.map((vendor) => (
-                <tr key={vendor.id} className="hover:bg-gray-50 transition-colors">
+              {vendors.map((vendor, index) => (
+                <AnimatedTableRow key={vendor.id} index={index}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {vendor.name}
                   </td>
@@ -85,7 +100,7 @@ export default function VendorManagement() {
                       <ActionButton icon={Trash2} label="Delete" variant="danger" />
                     </div>
                   </td>
-                </tr>
+                </AnimatedTableRow>
               ))}
             </tbody>
           </table>

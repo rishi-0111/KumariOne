@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 import { Search, Pencil, Trash2, UserX } from 'lucide-react';
 import ActionButton from '@/components/admin/ActionButton';
+import AnimatedTableRow from '@/components/admin/AnimatedTableRow';
 
 const users = [
   {
@@ -41,6 +43,17 @@ const users = [
 
 export default function UserManagement() {
   const [searchTerm, setSearchTerm] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
 
   const filteredUsers = users.filter(
     (user) =>
@@ -113,8 +126,8 @@ export default function UserManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+              {filteredUsers.map((user, index) => (
+                <AnimatedTableRow key={user.id} index={index}>
                   <td className="px-6 py-4 text-sm text-gray-600">{user.id}</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {user.name}
@@ -138,7 +151,7 @@ export default function UserManagement() {
                       <ActionButton icon={Trash2} label="Delete" variant="danger" />
                     </div>
                   </td>
-                </tr>
+                </AnimatedTableRow>
               ))}
             </tbody>
           </table>

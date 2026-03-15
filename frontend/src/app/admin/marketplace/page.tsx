@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { Check, Trash2 } from 'lucide-react';
 import ActionButton from '@/components/admin/ActionButton';
+import AnimatedTableRow from '@/components/admin/AnimatedTableRow';
 
 const products = [
   {
@@ -31,6 +34,17 @@ const products = [
 ];
 
 export default function MarketplaceManagement() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
   const getStatusBadge = (status: string) => {
     return status === 'Active'
       ? 'bg-green-100 text-green-800'
@@ -38,7 +52,7 @@ export default function MarketplaceManagement() {
   };
 
   return (
-    <div className="space-y-6">
+    <div ref={containerRef} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-gray-600">Total Products</p>
@@ -80,8 +94,8 @@ export default function MarketplaceManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {products.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+              {products.map((product, index) => (
+                <AnimatedTableRow key={product.id} index={index}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {product.name}
                   </td>
@@ -101,7 +115,7 @@ export default function MarketplaceManagement() {
                       <ActionButton icon={Trash2} label="Remove" variant="danger" />
                     </div>
                   </td>
-                </tr>
+                </AnimatedTableRow>
               ))}
             </tbody>
           </table>
